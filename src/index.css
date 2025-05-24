@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  :root {
+    --background: 15 23 42;
+    --foreground: 248 250 252;
+
+    --card: 30 41 59;
+    --card-foreground: 248 250 252;
+
+    --popover: 30 41 59;
+    --popover-foreground: 248 250 252;
+
+    --primary: 124 58 237;
+    --primary-foreground: 248 250 252;
+
+    --secondary: 71 85 105;
+    --secondary-foreground: 248 250 252;
+
+    --muted: 51 65 85;
+    --muted-foreground: 148 163 184;
+
+    --accent: 88 28 135;
+    --accent-foreground: 248 250 252;
+
+    --destructive: 239 68 68;
+    --destructive-foreground: 248 250 252;
+
+    --border: 51 65 85;
+    --input: 51 65 85;
+    --ring: 124 58 237;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 15 23 42;
+    --sidebar-foreground: 248 250 252;
+    --sidebar-primary: 124 58 237;
+    --sidebar-primary-foreground: 248 250 252;
+    --sidebar-accent: 51 65 85;
+    --sidebar-accent-foreground: 248 250 252;
+    --sidebar-border: 51 65 85;
+    --sidebar-ring: 124 58 237;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-divine-indigo text-divine-ivory font-['Inter'] antialiased;
+    background: radial-gradient(ellipse at center, #581c87 0%, #1e1b4b 50%, #0f0f23 100%);
+    min-height: 100vh;
+  }
+
+  .font-cinzel {
+    font-family: 'Cinzel', serif;
+  }
+
+  .font-devanagari {
+    font-family: 'Noto Sans Devanagari', sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl;
+  }
+
+  .divine-glow {
+    box-shadow: 
+      0 0 20px rgba(124, 58, 237, 0.3),
+      0 0 40px rgba(124, 58, 237, 0.2),
+      0 0 60px rgba(124, 58, 237, 0.1);
+  }
+
+  .cosmic-particles {
+    background-image: 
+      radial-gradient(2px 2px at 20px 30px, #fbbf24, transparent),
+      radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.8), transparent),
+      radial-gradient(1px 1px at 90px 40px, #c4b5fd, transparent),
+      radial-gradient(1px 1px at 130px 80px, #ddd6fe, transparent),
+      radial-gradient(2px 2px at 160px 30px, rgba(255, 255, 255, 0.6), transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: cosmic-drift 20s linear infinite;
+  }
+
+  @keyframes cosmic-drift {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-200px, -100px); }
+  }
+
+  .sanskrit-float {
+    position: absolute;
+    font-family: 'Noto Sans Devanagari', sans-serif;
+    color: rgba(196, 181, 253, 0.3);
+    font-size: 1.5rem;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .mandala-bg {
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c4b5fd' fill-opacity='0.03'%3E%3Cpath d='M50 50m-20 0a20 20 0 1 1 40 0a20 20 0 1 1 -40 0'/%3E%3Cpath d='M50 30v40M30 50h40'/%3E%3Cpath d='M35.86 35.86l28.28 28.28M64.14 35.86L35.86 64.14'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 100px 100px;
+    animation: mandala-spin 30s linear infinite;
+  }
+}
+
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(30, 27, 75, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #7c3aed, #581c87);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #8b5cf6, #6d28d9);
+}
