@@ -1,28 +1,59 @@
-
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flame, Award, BookOpen, BarChart3, PieChart, Play, Pause } from 'lucide-react';
+import { Calendar, BookOpen, BarChart3, Play, Pause } from 'lucide-react';
 import AnimatedBackground from '../components/AnimatedBackground';
 import DharmaProgress from '../components/DharmaProgress';
 import AchievementBadges from '../components/AchievementBadges';
 import LoginStreak from '../components/LoginStreak';
+import axios from 'axios';
 
 const Dashboard = () => {
   const [musicEnabled, setMusicEnabled] = useState(false);
   const [userName] = useState('Arjuna'); // This would come from auth context
-  
+  const [progressData, setProgressData] = useState(null); // Holds progress data from backend
+  const [loading, setLoading] = useState(true); // Loading state
+
   const dailyQuote = {
     sanskrit: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन",
     translation: "You have the right to perform action, but never to the fruits of action.",
     chapter: "Chapter 2, Verse 47"
   };
 
-  const stats = {
-    loginStreak: 5,
-    chaptersExplored: 8,
-    totalChapters: 18,
-    versesSaved: 23,
-    reflectionDays: 12
-  };
+  // Fetch progress data from backend
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const userId = '12345'; // Replace with actual user ID from auth context
+        const response = await axios.get(`http://localhost:5000/progress/${userId}`);
+        setProgressData(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching progress data:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchProgress();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-divine-lavender">Loading your progress...</p>
+      </div>
+    );
+  }
+
+  if (!progressData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-divine-lavender">No progress data found.</p>
+      </div>
+    );
+  }
+
+  const { touched_chapters, current_streak } = progressData;
+  const chaptersExplored = touched_chapters.length;
+  const totalChapters = 18; // Total chapters in the Gita
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -79,13 +110,12 @@ const Dashboard = () => {
             </div>
 
             {/* Login Streak */}
-            <LoginStreak streak={stats.loginStreak} />
+            <LoginStreak streak={current_streak} />
 
             {/* Dharma Progress */}
             <DharmaProgress 
-              chaptersExplored={stats.chaptersExplored}
-              totalChapters={stats.totalChapters}
-              versesSaved={stats.versesSaved}
+              chaptersExplored={chaptersExplored}
+              totalChapters={totalChapters}
             />
           </div>
 
@@ -100,55 +130,23 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <BookOpen className="text-divine-gold" size={20} />
-                    <span className="text-divine-lavender">Verses Saved</span>
+                    <span className="text-divine-lavender">Chapters Explored</span>
                   </div>
-                  <span className="text-divine-ivory font-bold">{stats.versesSaved}</span>
+                  <span className="text-divine-ivory font-bold">{chaptersExplored} / {totalChapters}</span>
                 </div>
                 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Calendar className="text-divine-gold" size={20} />
-                    <span className="text-divine-lavender">Reflection Days</span>
+                    <span className="text-divine-lavender">Current Streak</span>
                   </div>
-                  <span className="text-divine-ivory font-bold">{stats.reflectionDays}</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <BarChart3 className="text-divine-gold" size={20} />
-                    <span className="text-divine-lavender">Progress</span>
-                  </div>
-                  <span className="text-divine-ivory font-bold">
-                    {Math.round((stats.chaptersExplored / stats.totalChapters) * 100)}%
-                  </span>
+                  <span className="text-divine-ivory font-bold">{current_streak} days</span>
                 </div>
               </div>
             </div>
 
             {/* Achievements */}
             <AchievementBadges />
-
-            {/* Recent Activity */}
-            <div className="glass-card p-6 divine-glow">
-              <h3 className="font-cinzel text-xl font-bold text-divine-ivory mb-4">
-                Recent Reflections
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { verse: "2.47", theme: "Karma", time: "2 hours ago" },
-                  { verse: "4.7", theme: "Dharma", time: "Yesterday" },
-                  { verse: "6.35", theme: "Meditation", time: "2 days ago" }
-                ].map((item, index) => (
-                  <div key={index} className="flex items-center justify-between py-2 border-b border-white/10 last:border-b-0">
-                    <div>
-                      <span className="text-divine-gold font-medium">Verse {item.verse}</span>
-                      <div className="text-divine-lavender text-sm">{item.theme}</div>
-                    </div>
-                    <span className="text-divine-lavender/60 text-xs">{item.time}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </div>

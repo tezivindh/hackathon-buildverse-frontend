@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Filter, Star, Clock, Tag, BookOpen, Heart, Brain, Zap } from 'lucide-react';
 import AnimatedBackground from '../components/AnimatedBackground';
@@ -143,7 +142,7 @@ const Journey = () => {
         </div>
 
         {/* Verses Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 mb-24">
           {filteredVerses.map((verse) => (
             <div key={verse.id} className="glass-card p-6 divine-glow hover:scale-105 transition-all duration-300">
               {/* Verse Header */}
@@ -205,7 +204,6 @@ const Journey = () => {
             </div>
           ))}
         </div>
-
         {/* Empty State */}
         {filteredVerses.length === 0 && (
           <div className="text-center py-12">
