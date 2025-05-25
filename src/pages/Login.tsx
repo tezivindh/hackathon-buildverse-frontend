@@ -15,9 +15,15 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("Form submitted with data:", {
+      email: formData.email,
+      password: "***",
+    });
 
     try {
+      console.log("Calling login function...");
       await login(formData);
+      console.log("Login successful, navigating to dashboard...");
       // Only navigate if login was successful (no error thrown)
       navigate("/dashboard");
     } catch (error) {

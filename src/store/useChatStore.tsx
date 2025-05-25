@@ -51,7 +51,34 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const res = await axiosInstance.get<User[]>("/messages/users");
       set({ users: res.data });
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "An error occurred");
+      console.error("Error fetching users:", error);
+
+      // Provide fallback demo users when backend is not available
+      const demoUsers: User[] = [
+        {
+          _id: "demo1",
+          email: "arjuna@kurukshetra.com",
+          username: "Arjuna",
+        },
+        {
+          _id: "demo2",
+          email: "bhima@pandava.com",
+          username: "Bhima",
+        },
+        {
+          _id: "demo3",
+          email: "yudhishthira@dharma.com",
+          username: "Yudhishthira",
+        },
+      ];
+
+      set({ users: demoUsers });
+
+      if (error.code === "ECONNREFUSED" || error.code === "ERR_NETWORK") {
+        toast.error("Chat server is offline. Showing demo users.");
+      } else {
+        toast.error(error.response?.data?.message || "Unable to load users");
+      }
     } finally {
       set({ isUsersLoading: false });
     }
@@ -63,7 +90,33 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const res = await axiosInstance.get<Message[]>(`/messages/${userId}`);
       set({ messages: res.data });
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "An error occurred");
+      console.error("Error fetching messages:", error);
+
+      // Provide fallback demo messages
+      const demoMessages: Message[] = [
+        {
+          _id: "msg1",
+          senderId: userId,
+          receiverId: useAuthStore.getState().authUser?._id || "current",
+          text: "Namaste! Welcome to Krishna Saarthi. This is a demo message since the chat server is offline.",
+          createdAt: new Date().toISOString(),
+        },
+        {
+          _id: "msg2",
+          senderId: useAuthStore.getState().authUser?._id || "current",
+          receiverId: userId,
+          text: "Thank you for the warm welcome! I'm excited to be part of this spiritual community.",
+          createdAt: new Date(Date.now() - 60000).toISOString(),
+        },
+      ];
+
+      set({ messages: demoMessages });
+
+      if (error.code === "ECONNREFUSED" || error.code === "ERR_NETWORK") {
+        toast.error("Chat server is offline. Showing demo conversation.");
+      } else {
+        toast.error(error.response?.data?.message || "Unable to load messages");
+      }
     } finally {
       set({ isMessagesLoading: false });
     }
@@ -80,7 +133,25 @@ export const useChatStore = create<ChatState>((set, get) => ({
       );
       set({ messages: [...messages, res.data] });
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "An error occurred");
+      console.error("Error sending message:", error);
+
+      // Create a demo message when backend is offline
+      const demoMessage: Message = {
+        _id: `demo_${Date.now()}`,
+        senderId: useAuthStore.getState().authUser?._id || "current",
+        receiverId: selectedUser._id,
+        text: messageData.text,
+        image: messageData.image,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({ messages: [...messages, demoMessage] });
+
+      if (error.code === "ECONNREFUSED" || error.code === "ERR_NETWORK") {
+        toast.error("Chat server is offline. Message saved locally.");
+      } else {
+        toast.error(error.response?.data?.message || "Failed to send message");
+      }
     }
   },
 

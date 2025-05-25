@@ -62,12 +62,28 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   signup: async (data: SignupData): Promise<void> => {
     set({ isSigningUp: true });
+    console.log("Signup attempt with data:", {
+      username: data.username,
+      email: data.email,
+      password: "***",
+    });
+    console.log(
+      "API endpoint:",
+      axiosInstance.defaults.baseURL + "/auth/signup"
+    );
+
     try {
       const res = await axiosInstance.post<AuthUser>("/auth/signup", data);
+      console.log("Signup successful, response:", res.data);
       set({ authUser: res.data });
       toast.success("Account created successfully");
       get().connectSocket();
     } catch (error: any) {
+      console.error("Signup error details:", error);
+      console.error("Error response:", error.response);
+      console.error("Error status:", error.response?.status);
+      console.error("Error data:", error.response?.data);
+
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
@@ -83,12 +99,27 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   login: async (data: LoginData): Promise<void> => {
     set({ isLoggingIn: true });
+    console.log("Login attempt with data:", {
+      email: data.email,
+      password: "***",
+    });
+    console.log(
+      "API endpoint:",
+      axiosInstance.defaults.baseURL + "/auth/login"
+    );
+
     try {
       const res = await axiosInstance.post<AuthUser>("/auth/login", data);
+      console.log("Login successful, response:", res.data);
       set({ authUser: res.data });
       toast.success("Logged in successfully");
       get().connectSocket();
     } catch (error: any) {
+      console.error("Login error details:", error);
+      console.error("Error response:", error.response);
+      console.error("Error status:", error.response?.status);
+      console.error("Error data:", error.response?.data);
+
       // Clear any existing auth state on login failure
       set({ authUser: null });
 

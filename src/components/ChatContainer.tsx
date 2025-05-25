@@ -16,14 +16,16 @@ const ChatContainer = () => {
     unsubscribeFromMessages,
   } = useChatStore();
   const { authUser } = useAuthStore();
-  const messageEndRef = useRef(null);
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getMessages(selectedUser._id);
-    subscribeToMessages();
+    if (selectedUser?._id) {
+      getMessages(selectedUser._id);
+      subscribeToMessages();
+    }
     return () => unsubscribeFromMessages();
   }, [
-    selectedUser._id,
+    selectedUser?._id,
     getMessages,
     subscribeToMessages,
     unsubscribeFromMessages,
@@ -34,6 +36,14 @@ const ChatContainer = () => {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+  if (!selectedUser) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
+        <p className="text-divine-lavender">No user selected</p>
+      </div>
+    );
+  }
 
   if (isMessagesLoading) {
     return (
@@ -46,46 +56,73 @@ const ChatContainer = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-auto">
+    <div className="flex-1 flex flex-col overflow-auto bg-black/5">
       <ChatHeader />
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
           <div
             key={message._id}
-            className={`chat ${
-              message.senderId === authUser._id ? "chat-end" : "chat-start"
+            className={`flex ${
+              message.senderId === authUser?._id
+                ? "justify-end"
+                : "justify-start"
             }`}
-            ref={messageEndRef}
           >
-            <div className=" chat-image avatar">
-              <div className="size-10 rounded-full border">
-                <img
-                  src={
-                    message.senderId === authUser._id
-                      ? "/avatar.png"
-                      : "/avatar.png"
-                  }
-                  alt="profile pic"
-                />
-              </div>
-            </div>
-            <div className="chat-header mb-1">
-              <time className="text-xs opacity-50 ml-1">
-                {formatMessageTime(message.createdAt)}
-              </time>
-            </div>
-            <div className="chat-bubble flex flex-col">
-              {message.image && (
-                <img
-                  src={message.image}
-                  alt="Attachment"
-                  className="sm:max-w-[200px] rounded-md mb-2"
-                />
+            <div className="flex items-start space-x-3 max-w-xs lg:max-w-md">
+              {message.senderId !== authUser?._id && (
+                <div className="w-8 h-8 rounded-full border border-divine-gold/30 overflow-hidden flex-shrink-0">
+                  <img
+                    src="/avatar.png"
+                    alt="profile pic"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               )}
-              {message.text && <p>{message.text}</p>}
+
+              <div
+                className={`flex flex-col ${
+                  message.senderId === authUser?._id
+                    ? "items-end"
+                    : "items-start"
+                }`}
+              >
+                <div className="text-xs text-divine-lavender/60 mb-1">
+                  {formatMessageTime(message.createdAt)}
+                </div>
+
+                <div
+                  className={`rounded-2xl p-4 ${
+                    message.senderId === authUser?._id
+                      ? "bg-gradient-to-r from-divine-gold to-divine-gold-light text-divine-indigo"
+                      : "glass-card text-divine-ivory"
+                  }`}
+                >
+                  {message.image && (
+                    <img
+                      src={message.image}
+                      alt="Attachment"
+                      className="max-w-[200px] rounded-md mb-2"
+                    />
+                  )}
+                  {message.text && (
+                    <p className="leading-relaxed">{message.text}</p>
+                  )}
+                </div>
+              </div>
+
+              {message.senderId === authUser?._id && (
+                <div className="w-8 h-8 rounded-full border border-divine-gold/30 overflow-hidden flex-shrink-0">
+                  <img
+                    src="/avatar.png"
+                    alt="profile pic"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
           </div>
         ))}
+        <div ref={messageEndRef} />
       </div>
       <MessageInput />
     </div>
