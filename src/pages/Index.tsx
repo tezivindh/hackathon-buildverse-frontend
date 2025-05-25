@@ -1,8 +1,9 @@
-
-import Home from './Home';
-
+import Story from "@/components/Story";
+import HomePage from "./Home";
+import { useAuthStore } from "@/store/useAuthStore";
 const Index = () => {
-  return <Home />;
+  const { authUser } = useAuthStore();
+  return authUser !== null ? <HomePage /> : <Story />;
 };
 
 export default Index;
