@@ -43,7 +43,8 @@ const Dashboard = () => {
     );
   }
 
-  if (!progressData) {
+  // Check that progressData exists and has chapters
+  if (!progressData || !progressData.chapters) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-divine-lavender">No progress data found.</p>
@@ -51,8 +52,8 @@ const Dashboard = () => {
     );
   }
 
-  const { touched_chapters, current_streak } = progressData;
-  const chaptersExplored = touched_chapters.length;
+  const { chapters, current_streak } = progressData;
+  const chaptersExplored = chapters.length;
   const totalChapters = 18; // Total chapters in the Gita
 
   return (
